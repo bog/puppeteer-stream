@@ -51,6 +51,8 @@ export async function launch(
 
 	if (!opts.args) opts.args = [];
 
+	if (!opts.ignoreDefaultArgs) opts.ignoreDefaultArgs = [];
+
 	const extensionPath = path.join(__dirname, "..", "extension");
 	const extensionId = "jjndjgheafjngoipoacpjgeicjeomjli";
 	let loadExtension = false;
@@ -83,7 +85,13 @@ export async function launch(
 			`--window-size=${opts.defaultViewport?.width}x${opts.defaultViewport?.height}`
 		);
 
-	opts.headless = false;
+	if (opts.headless) {
+		// chrome as a value loads the chrome browser environment
+		// see: https://bugs.chromium.org/p/chromium/issues/detail?id=706008#c36
+		opts.headless = 'chrome';
+		// by default, headless mode mutes audio. disable that.
+		opts.ignoreDefaultArgs.push('--mute-audio');
+	}
 
 	let browser : Browser;
 	if (typeof arg1.launch == "function") {
