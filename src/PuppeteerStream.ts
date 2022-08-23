@@ -13,8 +13,9 @@ export class Stream extends Readable {
 		super(options);
 	}
 
-	_read() {}
+	_read() { }
 
+	// @ts-ignore
 	async destroy() {
 		super.destroy();
 		// @ts-ignore
@@ -90,10 +91,12 @@ export async function launch(
 		// see: https://bugs.chromium.org/p/chromium/issues/detail?id=706008#c36
 		opts.headless = 'chrome';
 		// by default, headless mode mutes audio. disable that.
-		opts.ignoreDefaultArgs.push('--mute-audio');
+		if (Array.isArray(opts.ignoreDefaultArgs)) {
+			opts.ignoreDefaultArgs.push('--mute-audio');
+		}
 	}
 
-	let browser : Browser;
+	let browser: Browser;
 	if (typeof arg1.launch == "function") {
 		browser = await arg1.launch(opts);
 	} else {
